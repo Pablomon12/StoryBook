@@ -8,6 +8,7 @@ Aplicacion en Streamlit que transforma un dibujo subido por el usuario en una hi
 - `uv` instalado para gestionar dependencias y ejecutar comandos.
 - Una API key de OpenAI.
 
+
 Puedes comprobar las versiones con:
 
 ```bash
