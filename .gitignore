@@ -10,6 +10,7 @@ build/
 dist/
 wheels/
 *.egg-info
+coverage/
 
 # Virtual environments
 .venv
@@ -24,6 +25,19 @@ env/
 # Streamlit local config/cache
 .streamlit/secrets.toml
 .streamlit/config.toml
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/package-lock 2.json
+
+# Generated project assets
+generated/
+
+# Logs
+*.log
 
 # OS and editor files
 .DS_Store

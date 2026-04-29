@@ -1,0 +1,26 @@
+{
+  "name": "story-creator-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20 <23"
+  },
+  "scripts": {
+    "predev": "node scripts/check-node-version.js",
+    "prebuild": "node scripts/check-node-version.js",
+    "prestart": "node scripts/check-node-version.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "15.3.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.29",
+    "@types/react": "19.1.6",
+    "typescript": "5.8.3"
+  }
+}

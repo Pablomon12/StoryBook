@@ -1,18 +1,16 @@
 import base64
-from typing import BinaryIO
 
 from app.core.agent import client, image_agent, vision_agent
 from app.core.config import settings
 
 
 def extract_drawing_description(
-    uploaded_image: BinaryIO,
+    uploaded_image: bytes,
+    content_type: str = "image/png",
     character_name: str = "",
     character_personality: str = "",
 ) -> str:
-    image_bytes = uploaded_image.getvalue()
-    content_type = getattr(uploaded_image, "type", None) or "image/png"
-    image_data = base64.b64encode(image_bytes).decode("utf-8")
+    image_data = base64.b64encode(uploaded_image).decode("utf-8")
     image_url = f"data:{content_type};base64,{image_data}"
 
     prompt = (

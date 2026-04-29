@@ -61,3 +61,9 @@ def test_continue_written_story_joins_streamed_chunks(monkeypatch) -> None:
     )
 
     assert result == "La puerta se abrio."
+
+
+def test_append_story_text_preserves_paragraph_spacing() -> None:
+    result = story.append_story_text("Luna encontro un mapa.", "Decidio seguir el camino dorado.")
+
+    assert result == "Luna encontro un mapa.\n\nDecidio seguir el camino dorado."

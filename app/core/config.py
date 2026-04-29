@@ -11,11 +11,14 @@ class Settings(BaseSettings):
     openai_model_write: str = "gpt-4.1-nano"
     openai_model_vision: str = "gpt-4.1-mini"
     openai_model_image: str = "gpt-image-1"
-
+    frontend_origins: str = "http://localhost:3000"
 
     openai_temperature: float = 0.7
     openai_max_tokens: int = 1024
 
+    @property
+    def cors_origins(self) -> list[str]:
+        return [origin.strip() for origin in self.frontend_origins.split(",") if origin.strip()]
 
 
 settings = Settings()

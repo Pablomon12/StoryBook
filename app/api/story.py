@@ -88,6 +88,16 @@ def stream_start_written_story(
     yield from stream_story_text(prompt)
 
 
+def append_story_text(existing_text: str, new_text: str) -> str:
+    base = existing_text.strip()
+    addition = new_text.strip()
+    if not base:
+        return addition
+    if not addition:
+        return base
+    return f"{base}\n\n{addition}"
+
+
 def start_written_story(
     character_name: str,
     character_personality: str,
