@@ -32,7 +32,11 @@ type StoryImage = {
   src: string;
 };
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000/api";
+type ErrorPayload = {
+  detail?: string;
+};
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 const EMPTY_STATE: StoryState = {
   phase: "start",
   choices: [],
@@ -170,7 +174,16 @@ export default function HomePage() {
       });
 
       if (!response.ok) {
-        throw new Error("No se pudo crear la ilustracion.");
+        let errorMessage = "No se pudo crear la ilustracion.";
+        try {
+          const errorPayload = (await response.json()) as ErrorPayload;
+          if (typeof errorPayload.detail === "string" && errorPayload.detail.trim()) {
+            errorMessage = errorPayload.detail.trim();
+          }
+        } catch {
+          // Keep the fallback message when the API returns no JSON body.
+        }
+        throw new Error(errorMessage);
       }
 
       const payload = (await response.json()) as { image_base64: string; media_type: string };
