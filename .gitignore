@@ -12,7 +12,7 @@ wheels/
 *.egg-info
 coverage/
 
-# Virtual environments
+# Local virtual environments
 .venv
 venv/
 env/
@@ -21,10 +21,6 @@ env/
 .env
 .env.*
 !.env.example
-
-# Streamlit local config/cache
-.streamlit/secrets.toml
-.streamlit/config.toml
 
 # Frontend build artifacts
 frontend/node_modules/
@@ -36,7 +32,7 @@ frontend/package-lock 2.json
 # Generated project assets
 generated/
 
-# Logs
+# Docker and runtime logs
 *.log
 
 # OS and editor files
