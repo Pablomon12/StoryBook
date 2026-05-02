@@ -1,10 +1,18 @@
 import json
+from io import BytesIO
 
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from app.main import app
 
 client = TestClient(app)
+
+
+def make_png_bytes() -> bytes:
+    buffer = BytesIO()
+    Image.new("RGB", (1, 1), color=(255, 255, 255)).save(buffer, format="PNG")
+    return buffer.getvalue()
 
 
 def test_healthcheck_returns_status_and_version() -> None:
@@ -25,6 +33,28 @@ def test_describe_character_requires_image_upload() -> None:
     assert response.json()["detail"] == "Only image uploads are supported."
 
 
+def test_describe_character_rejects_unsupported_image_format() -> None:
+    response = client.post(
+        "/api/characters/describe",
+        files={"image": ("drawing.heic", b"fake-heic", "image/heic")},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Formato no compatible. Usa PNG, JPEG, GIF o WEBP."
+
+
+def test_describe_character_rejects_invalid_image_bytes() -> None:
+    response = client.post(
+        "/api/characters/describe",
+        files={"image": ("drawing.png", b"not-a-real-image", "image/png")},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == (
+        "La imagen no es valida o esta dañada. Sube un PNG, JPEG, GIF o WEBP."
+    )
+
+
 def test_describe_character_returns_drawing_description(monkeypatch) -> None:
     def fake_extract_drawing_description(**kwargs) -> str:
         assert kwargs["content_type"] == "image/png"
@@ -39,7 +69,7 @@ def test_describe_character_returns_drawing_description(monkeypatch) -> None:
             "character_name": "Luna",
             "character_personality": "curiosa",
         },
-        files={"image": ("drawing.png", b"binary-image", "image/png")},
+        files={"image": ("drawing.png", make_png_bytes(), "image/png")},
     )
 
     assert response.status_code == 200
