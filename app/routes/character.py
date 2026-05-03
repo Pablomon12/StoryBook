@@ -18,7 +18,7 @@ async def describe_character(
     character_personality: str = Form(default=""),
 ) -> CharacterDescriptionResponse:
     if not image.content_type or not image.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Only image uploads are supported.")
+        raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen.")
     if image.content_type not in SUPPORTED_IMAGE_TYPES:
         raise HTTPException(
             status_code=400,
@@ -27,7 +27,7 @@ async def describe_character(
 
     image_bytes = await image.read()
     if not image_bytes:
-        raise HTTPException(status_code=400, detail="The uploaded image is empty.")
+        raise HTTPException(status_code=400, detail="La imagen subida esta vacia.")
 
     try:
         with Image.open(BytesIO(image_bytes)) as uploaded:

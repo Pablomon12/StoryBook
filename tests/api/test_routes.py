@@ -30,7 +30,7 @@ def test_describe_character_requires_image_upload() -> None:
     )
 
     assert response.status_code == 400
-    assert response.json()["detail"] == "Only image uploads are supported."
+    assert response.json()["detail"] == "Solo se permiten archivos de imagen."
 
 
 def test_describe_character_rejects_unsupported_image_format() -> None:
@@ -167,9 +167,43 @@ def test_generate_image_returns_base64_payload(monkeypatch) -> None:
             "situation_description": "un bosque brillante",
             "story_context": "Habia una vez",
             "chosen_action": "Abrir la puerta",
+            "story_state": {
+                "phase": "choice_1",
+                "choices": [],
+                "image_count": 1,
+                "max_images": 3,
+            },
         },
     )
 
     assert response.status_code == 200
     assert response.json()["media_type"] == "image/png"
     assert response.json()["image_base64"] == "aW1hZ2UtYnl0ZXM="
+    assert response.json()["story_state"]["image_count"] == 2
+
+
+def test_generate_image_rejects_requests_after_reaching_limit(monkeypatch) -> None:
+    monkeypatch.setattr("app.routes.images.generate_character_image", lambda **kwargs: b"image-bytes")
+
+    response = client.post(
+        "/api/images/generate",
+        json={
+            "character_name": "Luna",
+            "character_personality": "curiosa",
+            "drawing_description": "Una nina con capa roja",
+            "situation_description": "un bosque brillante",
+            "story_context": "Habia una vez",
+            "chosen_action": "Abrir la puerta",
+            "story_state": {
+                "phase": "choice_1",
+                "choices": [],
+                "image_count": 3,
+                "max_images": 3,
+            },
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == (
+        "La historia ya ha alcanzado el maximo de ilustraciones permitidas."
+    )

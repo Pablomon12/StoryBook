@@ -31,6 +31,12 @@ type ErrorPayload = {
   detail?: string | Array<{ msg?: string }>;
 };
 
+type ImageGenerateResponse = {
+  image_base64: string;
+  media_type: string;
+  story_state: StoryState;
+};
+
 type AppMode = "setup" | "reader";
 
 type BookPage = {
@@ -55,13 +61,6 @@ const EMPTY_STATE: StoryState = {
   max_images: 3,
 };
 const IMAGE_STORY_CONTEXT_LIMIT = 5000;
-
-function incrementImageCount(state: StoryState): StoryState {
-  return {
-    ...state,
-    image_count: Math.min(state.image_count + 1, state.max_images),
-  };
-}
 
 function clampText(value: string, maxLength: number): string {
   if (value.length <= maxLength) {
@@ -303,6 +302,7 @@ export default function HomePage() {
           situation_description: situationDescription,
           story_context: clampText(storyContext, IMAGE_STORY_CONTEXT_LIMIT),
           chosen_action: chosenAction,
+          story_state: nextStoryState,
         }),
       });
 
@@ -317,13 +317,13 @@ export default function HomePage() {
         throw new Error(errorMessage);
       }
 
-      const payload = (await response.json()) as { image_base64: string; media_type: string };
+      const payload = (await response.json()) as ImageGenerateResponse;
       updatePage(pageId, (page) => ({
         ...page,
         imageSrc: `data:${payload.media_type};base64,${payload.image_base64}`,
         isGeneratingImage: false,
       }));
-      return incrementImageCount(nextStoryState);
+      return payload.story_state;
     } catch (error) {
       updatePage(pageId, (page) => ({
         ...page,
@@ -544,7 +544,7 @@ export default function HomePage() {
                   <input
                     id="drawing"
                     type="file"
-                    accept="image/png,image/jpeg,image/jpg"
+                    accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
                     onChange={handleFileChange}
                   />
                 </div>

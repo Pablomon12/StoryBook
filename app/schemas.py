@@ -6,8 +6,8 @@ from app.story import StoryPhase, StoryState
 class StoryStatePayload(BaseModel):
     phase: StoryPhase = StoryPhase.START
     choices: list[str] = Field(default_factory=list)
-    image_count: int = 0
-    max_images: int = 3
+    image_count: int = Field(default=0, ge=0)
+    max_images: int = Field(default=3, ge=0)
 
 
 class CharacterDescriptionResponse(BaseModel):
@@ -46,11 +46,13 @@ class ImageGenerateRequest(BaseModel):
     situation_description: str = Field(default="", max_length=300)
     story_context: str = Field(default="", max_length=5000)
     chosen_action: str = Field(default="", max_length=120)
+    story_state: StoryStatePayload
 
 
 class ImageGenerateResponse(BaseModel):
     image_base64: str
     media_type: str = "image/png"
+    story_state: StoryStatePayload
 
 
 class HealthResponse(BaseModel):
